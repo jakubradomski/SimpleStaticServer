@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Configuration;
+
 namespace HTTPServer;
 
 sealed class AppConfig
@@ -17,4 +19,12 @@ sealed class AppConfig
     public int Port { get; set; }
 
     private AppConfig() { }
+
+    public void LoadFrom(IConfiguration config)
+    {
+        IConfiguration section = config.GetSection("Settings");
+
+        RootPath = section["RootPath"];
+        Port = int.Parse(section["Port"]);
+    }
 }
