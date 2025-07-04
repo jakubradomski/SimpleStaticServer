@@ -1,6 +1,6 @@
 namespace HTTPServer;
 
-interface IRequestHandler
+internal interface IRequestHandler
 {
     HttpResponse Handle(HttpRequest request);
 }

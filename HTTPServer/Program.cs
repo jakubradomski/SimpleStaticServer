@@ -12,9 +12,6 @@ class Program
 
         AppConfig.GetInstance().LoadFrom(config);
 
-        System.Console.WriteLine(AppConfig.GetInstance().RootPath);
-        System.Console.WriteLine(AppConfig.GetInstance().Port);
-
         var _fileProvider = new FileSystemFileProvider(AppConfig.GetInstance().RootPath);
         var _mimeMapper = new DefaultMimeMapper();
         StaticFileHandler _handler = new StaticFileHandler(_fileProvider, _mimeMapper);

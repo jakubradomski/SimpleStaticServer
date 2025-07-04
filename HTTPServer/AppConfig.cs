@@ -24,7 +24,7 @@ sealed class AppConfig
     {
         IConfiguration section = config.GetSection("Settings");
 
-        RootPath = section["RootPath"];
-        Port = int.Parse(section["Port"]);
+        RootPath = section["RootPath"] ?? "/";
+        Port = int.Parse(section["Port"] ?? "80");
     }
 }

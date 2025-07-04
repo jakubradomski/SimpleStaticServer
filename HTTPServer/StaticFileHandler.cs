@@ -2,7 +2,7 @@ using System.Text;
 
 namespace HTTPServer;
 
-class StaticFileHandler : IRequestHandler
+internal class StaticFileHandler : IRequestHandler
 {
     private readonly IFileProvider _fileProvider;
     private readonly IMimeMapper _mimeMapper;
@@ -20,7 +20,7 @@ class StaticFileHandler : IRequestHandler
 
         if (!_fileProvider.Exists(fullPath))
         {
-            System.Console.WriteLine("file not found!");
+            Console.WriteLine("file not found!");
 
             var body = new MemoryStream(Encoding.UTF8.GetBytes("<h1>404 File Not Found</h1>"));
             return new HttpResponse

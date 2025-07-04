@@ -1,6 +1,6 @@
 namespace HTTPServer;
 
-class HttpResponse
+internal class HttpResponse
 {
     public string StatusCode { get; set; } = "200 OK";
     public string ContentType { get; set; } = "text/html";

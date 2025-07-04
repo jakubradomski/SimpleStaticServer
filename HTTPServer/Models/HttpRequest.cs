@@ -1,6 +1,6 @@
 namespace HTTPServer;
 
-class HttpRequest
+internal class HttpRequest
 {
     public string Method { get; set; }
     public string Path { get; set; }
