@@ -14,7 +14,8 @@ class Program
 
         var _fileProvider = new FileSystemFileProvider(AppConfig.GetInstance().RootPath);
         var _mimeMapper = new DefaultMimeMapper();
-        StaticFileHandler _handler = new StaticFileHandler(_fileProvider, _mimeMapper);
+        var _listingBuilder = new DirectoryListingBuilder();
+        StaticFileHandler _handler = new StaticFileHandler(_fileProvider, _mimeMapper, _listingBuilder);
 
         int minThreads = AppConfig.GetInstance().MinThreads;
         int maxThreads = AppConfig.GetInstance().MaxThreads;

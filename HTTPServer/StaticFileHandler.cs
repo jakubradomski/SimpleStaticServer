@@ -8,11 +8,11 @@ internal class StaticFileHandler : IRequestHandler
     private readonly IMimeMapper _mimeMapper;
     private readonly IDirectoryListingBuilder _listingBuilder;
 
-    public StaticFileHandler(IFileProvider fileProvider, IMimeMapper mimeMapper)
+    public StaticFileHandler(IFileProvider fileProvider, IMimeMapper mimeMapper, IDirectoryListingBuilder listingBuilder)
     {
         _fileProvider = fileProvider;
         _mimeMapper = mimeMapper;
-        _listingBuilder = new DirectoryListingBuilder();
+        _listingBuilder = listingBuilder;
     }
 
     public HttpResponse Handle(HttpRequest request)
@@ -20,8 +20,6 @@ internal class StaticFileHandler : IRequestHandler
         string rawPath = request.Path == "/" ? AppConfig.GetInstance().DefaultFile : request.Path;
         string path = Uri.UnescapeDataString(rawPath);
         string fullPath = _fileProvider.GetFullPath(path);
-
-        System.Console.WriteLine(fullPath + " path");
 
         if (_fileProvider.FileExists(fullPath)) // Handle File
         {
