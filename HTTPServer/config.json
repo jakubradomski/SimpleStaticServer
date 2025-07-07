@@ -1,6 +1,8 @@
 {
     "Settings" : {
         "RootPath" : "/home/kuba/server",
-        "Port" : 8080
+        "Port" : 8080,
+        "MinThreads" : 10,
+        "MaxThreads" : 100
     }
 }

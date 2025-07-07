@@ -16,6 +16,12 @@ class Program
         var _mimeMapper = new DefaultMimeMapper();
         StaticFileHandler _handler = new StaticFileHandler(_fileProvider, _mimeMapper);
 
+        int minThreads = AppConfig.GetInstance().MinThreads;
+        int maxThreads = AppConfig.GetInstance().MaxThreads;
+
+        ThreadPool.SetMinThreads(minThreads, minThreads);
+        ThreadPool.SetMaxThreads(maxThreads, maxThreads);
+
         WebServer server = new WebServer(_handler, AppConfig.GetInstance().Port);
         server.Start();
     }

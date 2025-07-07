@@ -17,6 +17,8 @@ sealed class AppConfig
 
     public string RootPath { get; set; }
     public int Port { get; set; }
+    public int MinThreads { get; set; }
+    public int MaxThreads { get; set; }
 
     private AppConfig() { }
 
@@ -26,5 +28,7 @@ sealed class AppConfig
 
         RootPath = section["RootPath"] ?? "/";
         Port = int.Parse(section["Port"] ?? "80");
+        MinThreads = int.Parse(section["MinThreads"] ?? "10");
+        MaxThreads = int.Parse(section["MaxThreads"] ?? "100");
     }
 }

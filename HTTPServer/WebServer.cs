@@ -28,12 +28,21 @@ class WebServer
         while (isRunning)
         {
             var client = _listener.AcceptTcpClient();
-            Task.Run(() => HandleClient(client));
+
+            ThreadPool.QueueUserWorkItem(HandleClient, client);
         }
     }
 
-    void HandleClient(TcpClient client)
+    void HandleClient(object? state)
     {
+        var client = state as TcpClient;
+
+        if (client == null)
+        {
+            Console.WriteLine("TcpClient is empty");
+            return;        
+        }
+
         using var stream = client.GetStream();
         using var reader = new StreamReader(stream, Encoding.UTF8);
 
