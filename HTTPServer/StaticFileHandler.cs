@@ -15,10 +15,10 @@ internal class StaticFileHandler : IRequestHandler
 
     public HttpResponse Handle(HttpRequest request)
     {
-        string path = request.Path == "/" ? "/index.html" : request.Path;
+        string path = request.Path == "/" ? AppConfig.GetInstance().DefaultFile: request.Path;
         string fullPath = _fileProvider.GetFullPath(path);
 
-        if (!_fileProvider.Exists(fullPath))
+        if (!_fileProvider.FileExists(fullPath))
         {
             Console.WriteLine("file not found!");
 

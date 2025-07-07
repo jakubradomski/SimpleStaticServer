@@ -16,6 +16,7 @@ sealed class AppConfig
     }
 
     public string RootPath { get; set; }
+    public string DefaultFile { get; set; }
     public int Port { get; set; }
     public int MinThreads { get; set; }
     public int MaxThreads { get; set; }
@@ -27,6 +28,7 @@ sealed class AppConfig
         IConfiguration section = config.GetSection("Settings");
 
         RootPath = section["RootPath"] ?? "/";
+        DefaultFile = section["DefaultFile"] ?? "/";
         Port = int.Parse(section["Port"] ?? "80");
         MinThreads = int.Parse(section["MinThreads"] ?? "10");
         MaxThreads = int.Parse(section["MaxThreads"] ?? "100");

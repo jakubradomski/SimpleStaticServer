@@ -18,7 +18,10 @@ dotnet run
 {
     "Settings" : {
         "RootPath" : "/files",
-        "Port" : 8080
+        "DefaultFile" : "index.html",
+        "Port" : 8080,
+        "MinThreads" : 10,
+        "MaxThreads" : 100
     }
 }
 ```
