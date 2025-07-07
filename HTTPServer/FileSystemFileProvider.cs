@@ -9,9 +9,26 @@ public class FileSystemFileProvider : IFileProvider
         _root = root;
     }
 
-    public string GetFullPath(string path) => Path.Combine(_root, path.TrimStart('/').Replace("/", "\\"));
+    public string GetFullPath(string path)
+    {
+        string sanitized = path.TrimStart('/', '\\');
+        string systemPath = sanitized.Replace('/', Path.DirectorySeparatorChar)
+                                    .Replace('\\', Path.DirectorySeparatorChar);
 
-    public bool Exists(string path) => File.Exists(path);
+        return Path.Combine(_root, systemPath);
+    }
+
+    public bool FileExists(string path) => File.Exists(path);
+    //public bool DirectoryExists(string path) => Directory.Exists(path.TrimEnd('/'));
+    public bool DirectoryExists(string path)
+    {
+        System.Console.WriteLine(path);
+        System.Console.WriteLine(path.TrimEnd('/'));
+        return Directory.Exists(path);
+    }
     public Stream Open(string path) => File.OpenRead(path);
     public long GetSize(string path) => new FileInfo(path).Length;
+    public string[] GetFilesInDirectory(string path) => Directory.GetFiles(path);
+    public string[] GetDirectoriesInDirectory(string path) => Directory.GetDirectories(path);
+
 }
