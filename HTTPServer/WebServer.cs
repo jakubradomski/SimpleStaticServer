@@ -28,32 +28,41 @@ class WebServer
         while (isRunning)
         {
             var client = _listener.AcceptTcpClient();
-
-            ThreadPool.QueueUserWorkItem(HandleClient, client);
+            _ = HandleClientAsync(client);
         }
     }
 
-    void HandleClient(object? state)
+    private async Task HandleClientAsync(TcpClient client)
     {
-        var client = state as TcpClient;
-
-        if (client == null)
+        try
         {
-            Console.WriteLine("TcpClient is empty");
-            return;        
+            using var stream = client.GetStream();
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+
+            var buffer = new byte[4096];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+
+            if (bytesRead == 0)
+            {
+                Console.WriteLine("Empty request recieved");
+                return;
+            }
+
+            string requestText = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            var request = HttpRequestParser.Parse(requestText);
+            Console.WriteLine($"{request.Method} {request.Path}");
+
+            var response = _handler.Handle(request);
+            await HttpResponseBuilder.SendResponse(stream, response);
         }
-
-        using var stream = client.GetStream();
-        using var reader = new StreamReader(stream, Encoding.UTF8);
-
-        var buffer = new byte[4096];
-        int bytesRead = stream.Read(buffer, 0, buffer.Length);
-        string requestText = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-        var request = HttpRequestParser.Parse(requestText);
-        System.Console.WriteLine($"{request.Method} {request.Path}");
-        var response = _handler.Handle(request);
-
-        HttpResponseBuilder.SendResponse(stream, response);
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] {ex.Message}");
+        }
+        finally
+        {
+            client.Close();
+        }
     }
 }
