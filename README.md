@@ -9,6 +9,7 @@ Lightweight and configurable static HTTP server written in c#.
 - Handling of invalid paths
 - Uses config file (`config.json`) for easy configuration
 - Clean and Modular design
+- Logging to console
 
 
 #### Prerequisites
@@ -28,8 +29,6 @@ Edit `config.json` to configure the server:
 | `RootPath`    | Directory to serve files from  | `wwwroot`    |
 | `DefaultFile` | File served at root (`/`) path | `index.html` |
 | `Port`        | Port to host the server        | `8080`       |
-| `MinThreads`  | Min threads in thread pool     | `10`         |
-| `MaxThreads`  | Max threads in thread pool     | `100`        |
 
 
 #### Example `config.json`
@@ -38,9 +37,7 @@ Edit `config.json` to configure the server:
     "Settings" : {
         "RootPath" : "/wwwroot",
         "DefaultFile" : "index.html",
-        "Port" : 8080,
-        "MinThreads" : 10,
-        "MaxThreads" : 100
+        "Port" : 8080
     }
 }
 ```

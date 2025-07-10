@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace HTTPServer;
 
@@ -9,13 +10,15 @@ class WebServer
     int _port = 8080;
     IPAddress serverAddress = IPAddress.Any;
     TcpListener _listener;
+    ILogger<WebServer> _logger;
     bool isRunning;
     IRequestHandler _handler;
 
-    public WebServer(IRequestHandler Handler, int port = 8080)
+    public WebServer(IRequestHandler handler, ILogger<WebServer> logger, int port = 8080)
     {
         _port = port;
-        _handler = Handler;
+        _handler = handler;
+        _logger = logger;
         _listener = new TcpListener(serverAddress, port);
     }
 
@@ -23,7 +26,7 @@ class WebServer
     {
         isRunning = true;
         _listener.Start();
-        Console.WriteLine($"Server started listening on: {_port}");
+        _logger.LogInformation($"Server started listening on: {_port}");
 
         while (isRunning)
         {
@@ -44,21 +47,21 @@ class WebServer
 
             if (bytesRead == 0)
             {
-                Console.WriteLine("Empty request recieved");
+                _logger.LogWarning("Empty request recieved");
                 return;
             }
 
             string requestText = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
             var request = HttpRequestParser.Parse(requestText);
-            Console.WriteLine($"{request.Method} {request.Path}");
+            _logger.LogInformation($"{request.Method} {request.Path}");
 
             var response = _handler.Handle(request);
             await HttpResponseBuilder.SendResponse(stream, response);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[ERROR] {ex.Message}");
+            _logger.LogError($"[ERROR] {ex.Message}");
         }
         finally
         {

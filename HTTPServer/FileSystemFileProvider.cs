@@ -19,13 +19,7 @@ public class FileSystemFileProvider : IFileProvider
     }
 
     public bool FileExists(string path) => File.Exists(path);
-    //public bool DirectoryExists(string path) => Directory.Exists(path.TrimEnd('/'));
-    public bool DirectoryExists(string path)
-    {
-        System.Console.WriteLine(path);
-        System.Console.WriteLine(path.TrimEnd('/'));
-        return Directory.Exists(path);
-    }
+    public bool DirectoryExists(string path) => Directory.Exists(path);    
     public Stream Open(string path) => File.OpenRead(path);
     public long GetSize(string path) => new FileInfo(path).Length;
     public string[] GetFilesInDirectory(string path) => Directory.GetFiles(path);

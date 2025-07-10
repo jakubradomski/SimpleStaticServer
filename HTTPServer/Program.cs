@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace HTTPServer;
 
@@ -6,24 +7,37 @@ class Program
 {
     static void Main(string[] args)
     {
-        IConfiguration config = new ConfigurationBuilder()
-            .AddJsonFile("config.json")
-            .Build();
+        using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+        });
 
-        AppConfig.GetInstance().LoadFrom(config);
+        ILogger<Program> programLogger = loggerFactory.CreateLogger<Program>();
+
+        IConfiguration config;
+        try
+        {
+            config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .Build();
+            AppConfig.GetInstance().LoadFrom(config);
+        }
+        catch (Exception ex)
+        {
+            programLogger.LogError(ex, "Failed to load config.json. Using defaults.");
+            AppConfig.GetInstance().LoadDefaults();
+        }
 
         var _fileProvider = new FileSystemFileProvider(AppConfig.GetInstance().RootPath);
         var _mimeMapper = new DefaultMimeMapper();
         var _listingBuilder = new DirectoryListingBuilder();
-        StaticFileHandler _handler = new StaticFileHandler(_fileProvider, _mimeMapper, _listingBuilder);
 
-        int minThreads = AppConfig.GetInstance().MinThreads;
-        int maxThreads = AppConfig.GetInstance().MaxThreads;
+        var _handlerLogger = loggerFactory.CreateLogger<StaticFileHandler>();
+        var _webServerLogger = loggerFactory.CreateLogger<WebServer>();
 
-        ThreadPool.SetMinThreads(minThreads, minThreads);
-        ThreadPool.SetMaxThreads(maxThreads, maxThreads);
+        StaticFileHandler _handler = new StaticFileHandler(_fileProvider, _mimeMapper, _listingBuilder, _handlerLogger);
 
-        WebServer server = new WebServer(_handler, AppConfig.GetInstance().Port);
+        WebServer server = new WebServer(_handler, _webServerLogger, AppConfig.GetInstance().Port);
         server.Start();
     }
 }

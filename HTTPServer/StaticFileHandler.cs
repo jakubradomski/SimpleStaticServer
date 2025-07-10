@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace HTTPServer;
 
@@ -7,12 +8,14 @@ internal class StaticFileHandler : IRequestHandler
     private readonly IFileProvider _fileProvider;
     private readonly IMimeMapper _mimeMapper;
     private readonly IDirectoryListingBuilder _listingBuilder;
+    private readonly ILogger<StaticFileHandler> _logger;
 
-    public StaticFileHandler(IFileProvider fileProvider, IMimeMapper mimeMapper, IDirectoryListingBuilder listingBuilder)
+    public StaticFileHandler(IFileProvider fileProvider, IMimeMapper mimeMapper, IDirectoryListingBuilder listingBuilder, ILogger<StaticFileHandler> logger)
     {
         _fileProvider = fileProvider;
         _mimeMapper = mimeMapper;
         _listingBuilder = listingBuilder;
+        _logger = logger;
     }
 
     public HttpResponse Handle(HttpRequest request)
@@ -45,6 +48,8 @@ internal class StaticFileHandler : IRequestHandler
                 ContentLength = htmlStream.Length
             };
         }
+
+        _logger.LogWarning($"File {fullPath} was not found");
 
         var body = new MemoryStream(Encoding.UTF8.GetBytes("<h1>404 Not Found</h1>"));
         return new HttpResponse
