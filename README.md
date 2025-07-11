@@ -22,13 +22,15 @@ dotnet run
 ```
 
 #### Configuration
-Edit `config.json` to configure the server:
+Server can be configured using either `config.json` file or command line arguments
 
-| Key           | Description                    | Default      |
-| ------------- | ------------------------------ | ------------ |
-| `RootPath`    | Directory to serve files from  | `wwwroot`    |
-| `DefaultFile` | File served at root (`/`) path | `index.html` |
-| `Port`        | Port to host the server        | `8080`       |
+#### `config.json`
+
+| Key           | Description                           | Default      |
+| ------------- | ------------------------------------- | ------------ |
+| `RootPath`    | Directory to serve files from         | `wwwroot`    |
+| `DefaultFile` | File served when no path is specified | `index.html` |
+| `Port`        | Port to host the server               | `8080`       |
 
 
 #### Example `config.json`
@@ -41,6 +43,16 @@ Edit `config.json` to configure the server:
     }
 }
 ```
+
+#### Command-Line Arguments
+| Flag       | Description   |
+| ---------- | ------------- |
+| `-p`       | `Port`        |
+| `-f`       | `DefaultFile` |
+| `-r`       | `RootPath `   |
+
+for example:
+`dotnet run -- -p 8080 -f index.html -r /wwwroot`
 
 #### Using the server
 - Browse to: `http://localhost:8080`

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.Logging;
 
 namespace HTTPServer;
@@ -14,11 +15,19 @@ class Program
 
         ILogger<Program> programLogger = loggerFactory.CreateLogger<Program>();
 
+        var configMapping = new Dictionary<string, string>
+        {
+            {"-p", "Settings:Port" },
+            {"-r", "Settings:RootPath" },
+            {"-f", "Settings:DefaultFile" }
+        };
+
         IConfiguration config;
         try
         {
             config = new ConfigurationBuilder()
-                .AddJsonFile("config.json")
+                .AddJsonFile("config.json", optional: true, reloadOnChange: false)
+                .AddCommandLine(args, configMapping)
                 .Build();
             AppConfig.GetInstance().LoadFrom(config);
         }

@@ -2,8 +2,6 @@
     "Settings" : {
         "RootPath" : "/home/kuba/server",
         "DefaultFile" : "index.html",
-        "Port" : 8080,
-        "MinThreads" : 10,
-        "MaxThreads" : 100
+        "Port" : 8080
     }
 }
