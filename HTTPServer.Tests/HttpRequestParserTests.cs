@@ -2,42 +2,48 @@
 
 public class HttpRequestParserTests
 {
-    [Fact]
-    public void Parse_ValidGetRequest_ReturnsExpectedValues()
+    [Theory]
+    [InlineData("GET /index.html HTTP/1.1", "GET", "/index.html", "HTTP/1.1")]
+    [InlineData("GET / HTTP/1.1", "GET", "/", "HTTP/1.1")]
+    [InlineData("GET /cat.png HTTP/2", "GET", "/cat.png", "HTTP/2")]
+    [InlineData("POST /cat.png HTTP/2", "POST", "/cat.png", "HTTP/2")]
+    public void Parse_ValidGetRequest_ReturnsExpectedValues(string input, string method, string path, string HttpVersion)
     {
-        string input = "GET /index.html HTTP/1.1\r\nHost: Test";
         var result = HttpRequestParser.Parse(input);
 
-        Assert.Equal("GET", result.Method);
-        Assert.Equal("/index.html", result.Path);
-        Assert.Equal("HTTP/1.1", result.HttpVersion);
+        Assert.Equal(method, result.Method);
+        Assert.Equal(path, result.Path);
+        Assert.Equal(HttpVersion, result.HttpVersion);
     }
 
-    [Fact]
-    public void Parse_ValidRequestHeaders_ReturnsExpectedValues()
+    [Theory]
+    [InlineData("GET /index.html HTTP/1.1\r\nHost: localhost\r\nUser-Agent: Test", "Host", "localhost")]
+    [InlineData("GET /index.html HTTP/1.1\r\nHost: localhost:8080\r\nUser-Agent: Chrome", "Host", "localhost:8080")]
+    [InlineData("GET /index.html HTTP/1.1\r\nHost: localhost\r\nUser-Agent: Chrome", "User-Agent", "Chrome")]
+    [InlineData("GET /index.html HTTP/1.1\r\nHost: localhost\r\nUser-Agent: Firefox", "User-Agent", "Firefox")]
+    public void Parse_ValidRequestHeaders_ReturnsExpectedValues(string input, string key, string expected)
     {
-        string input = "GET /index.html HTTP/1.1\r\nHost: localhost\r\nUser-Agent: Test";
         HttpRequest result = HttpRequestParser.Parse(input);
-
-        Assert.Equal("localhost", result.Headers["Host"]);
-        Assert.Equal("Test", result.Headers["User-Agent"]);
+        Assert.Equal(expected, result.Headers[key]);
     }
 
-    [Fact]
-    public void Parse_ThrowsException_WithExpectedMessage()
+    [Theory]
+    [InlineData("GET /index.html")]
+    [InlineData("/index.html HTTP/1.1")]
+    [InlineData("GET HTTP/1.1")]
+    public void Parse_ThrowsException_WithExpectedMessage(string input)
     {
-        string input = "GET /index.html\r\nHost: Test";
         var ex = Assert.Throws<Exception>(() => HttpRequestParser.Parse(input));
         Assert.Contains("Invalid request header!", ex.Message);
     }
 
-    [Fact]
-    public void Parse_ValidQueryParams_ReturnsExpectedValues()
+    [Theory]
+    [InlineData("GET /index.html?limit=10&page=2&query=cat HTTP/1.1", "limit", "10")]
+    [InlineData("GET /index.html?limit=10&page=2&query=cat HTTP/1.1", "page", "2")]
+    [InlineData("GET /index.html?limit=10&page=2&query=cat HTTP/1.1", "query", "cat")]    
+    public void Parse_ValidQueryParams_ReturnsExpectedValues(string input, string key, string expected)
     {
-        string input = "GET /index.html?page=1&limit=50 HTTP/1.1\r\nHost: Test";
         var result = HttpRequestParser.Parse(input);
-
-        Assert.Equal("1", result.QueryParams["page"]);
-        Assert.Equal("50", result.QueryParams["limit"]);
+        Assert.Equal(expected, result.QueryParams[key]);
     }
 }
