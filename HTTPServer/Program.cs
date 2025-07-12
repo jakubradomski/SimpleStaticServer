@@ -22,6 +22,7 @@ class Program
             {"-f", "Settings:DefaultFile" }
         };
 
+        IServerSettings settings;
         IConfiguration config;
         try
         {
@@ -29,24 +30,24 @@ class Program
                 .AddJsonFile("config.json", optional: true, reloadOnChange: false)
                 .AddCommandLine(args, configMapping)
                 .Build();
-            AppConfig.GetInstance().LoadFrom(config);
+            settings = new AppConfig(config);
         }
         catch (Exception ex)
         {
             programLogger.LogError(ex, "Failed to load config.json. Using defaults.");
-            AppConfig.GetInstance().LoadDefaults();
+            settings = new AppConfig(new ConfigurationBuilder().Build());
         }
 
-        var _fileProvider = new FileSystemFileProvider(AppConfig.GetInstance().RootPath);
+        var _fileProvider = new FileSystemFileProvider(settings.DefaultFile);
         var _mimeMapper = new DefaultMimeMapper();
         var _listingBuilder = new DirectoryListingBuilder();
 
         var _handlerLogger = loggerFactory.CreateLogger<StaticFileHandler>();
         var _webServerLogger = loggerFactory.CreateLogger<WebServer>();
 
-        StaticFileHandler _handler = new StaticFileHandler(_fileProvider, _mimeMapper, _listingBuilder, _handlerLogger);
+        StaticFileHandler _handler = new StaticFileHandler(_fileProvider, _mimeMapper, _listingBuilder, _handlerLogger, settings);
 
-        WebServer server = new WebServer(_handler, _webServerLogger, AppConfig.GetInstance().Port);
+        WebServer server = new WebServer(_handler, _webServerLogger, settings.Port);
         server.Start();
     }
 }

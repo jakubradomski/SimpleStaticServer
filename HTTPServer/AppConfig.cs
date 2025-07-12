@@ -2,33 +2,21 @@ using Microsoft.Extensions.Configuration;
 
 namespace HTTPServer;
 
-sealed class AppConfig
+sealed class AppConfig : IServerSettings
 {
-    private static AppConfig _instance;
-
-    public static AppConfig GetInstance()
+    public string RootPath { get; private set; }
+    public string DefaultFile { get; private set; }
+    public int Port { get; private set; }
+    public AppConfig(IConfiguration config)
     {
-        if (_instance == null)
-        {
-            _instance = new AppConfig();
-        }
-        return _instance;
+        var section = config.GetSection("Settings");
+
+        RootPath = section["RootPath"] ?? RootPath;
+        DefaultFile = section["DefaultFile"] ?? DefaultFile;
+
+        if (int.TryParse(section["Port"], out int port))
+            Port = port;
     }
-
-    public string RootPath { get; set; }
-    public string DefaultFile { get; set; }
-    public int Port { get; set; }
-    private AppConfig() { }
-
-    public void LoadFrom(IConfiguration config)
-    {
-        IConfiguration section = config.GetSection("Settings");
-
-        RootPath = section["RootPath"] ?? "wwwroot";
-        DefaultFile = section["DefaultFile"] ?? "/";
-        Port = int.Parse(section["Port"] ?? "80");
-    }
-
     public void LoadDefaults()
     {
         RootPath = "wwwroot";
