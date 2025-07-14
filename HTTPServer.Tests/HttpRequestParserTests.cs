@@ -34,7 +34,7 @@ public class HttpRequestParserTests
     public void Parse_ThrowsException_WithExpectedMessage(string input)
     {
         var ex = Assert.Throws<Exception>(() => HttpRequestParser.Parse(input));
-        Assert.Contains("Invalid request header!", ex.Message);
+        Assert.Contains("Invalid HTTP request line format.", ex.Message);
     }
 
     [Theory]

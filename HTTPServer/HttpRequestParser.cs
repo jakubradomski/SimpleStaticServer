@@ -8,14 +8,16 @@ internal static class HttpRequestParser
 
         var requestLine = lines[0].Split(' ');
         if (requestLine.Length != 3)
-            throw new Exception("Invalid request header!");
-            
+            throw new FormatException("Invalid HTTP request line format." + 
+                                      " Expected format: 'METHOD PATH VERSION'" + 
+                                      $" Actual: '{lines[0]}'");
+
         var method = requestLine[0];
         var path = requestLine[1];
         var version = requestLine[2];
         
 
-        var headers = new Dictionary<string, string>();
+        var headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (var line in lines.Skip(1))
         {
             int idx = line.IndexOf(':');
