@@ -33,7 +33,7 @@ public class HttpRequestParserTests
     [InlineData("GET HTTP/1.1")]
     public void Parse_ThrowsException_WithExpectedMessage(string input)
     {
-        var ex = Assert.Throws<Exception>(() => HttpRequestParser.Parse(input));
+        var ex = Assert.Throws<FormatException>(() => HttpRequestParser.Parse(input));
         Assert.Contains("Invalid HTTP request line format.", ex.Message);
     }
 

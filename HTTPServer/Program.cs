@@ -37,9 +37,9 @@ class Program
             settings = new AppConfig(new ConfigurationBuilder().Build());
         }
 
-        var _fileProvider = new FileSystemFileProvider(settings.DefaultFile);
+        var _fileProvider = new FileSystemFileProvider(settings.RootPath);
         var _mimeMapper = new DefaultMimeMapper();
-        var _listingBuilder = new DirectoryListingBuilder();
+        var _listingBuilder = new DirectoryListingBuilder(_fileProvider);
 
         var _handlerLogger = loggerFactory.CreateLogger<StaticFileHandler>();
         var _webServerLogger = loggerFactory.CreateLogger<WebServer>();

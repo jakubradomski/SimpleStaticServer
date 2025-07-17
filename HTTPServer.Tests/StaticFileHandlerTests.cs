@@ -50,7 +50,7 @@ public class StaticFileHandlerTests
         _fileProviderMock.Setup(f => f.DirectoryExists(fullPath)).Returns(true);
 
         _listingBuilderMock.Setup(l =>
-            l.BuildHtmlListing(fullPath, "/dir", _fileProviderMock.Object))
+            l.BuildHtmlListing(fullPath, "/dir"))
              .Returns("<html>listing</html>");
 
         var handler = CreateHandler();

@@ -26,6 +26,8 @@ internal class StaticFileHandler : IRequestHandler
         string path = Uri.UnescapeDataString(rawPath);
         string fullPath = _fileProvider.GetFullPath(path);
 
+        Console.WriteLine($"path:{path} requestPath:{fullPath}");
+
         if (_fileProvider.FileExists(fullPath))
         {
             return HandleFile(path, fullPath);
@@ -55,7 +57,7 @@ internal class StaticFileHandler : IRequestHandler
 
     private HttpResponse HandleDirectory(string path, string fullPath)
     {
-        string html = _listingBuilder.BuildHtmlListing(fullPath, path, _fileProvider);
+        string html = _listingBuilder.BuildHtmlListing(fullPath, path);
 
         var htmlStream = new MemoryStream(Encoding.UTF8.GetBytes(html));
         return new HttpResponse

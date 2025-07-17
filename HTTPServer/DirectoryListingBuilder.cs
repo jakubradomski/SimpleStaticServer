@@ -4,11 +4,18 @@ namespace HTTPServer;
 
 public class DirectoryListingBuilder : IDirectoryListingBuilder
 {
-    public string BuildHtmlListing(string path, string requestPath, IFileProvider fileProvider)
+    private IFileProvider _fileProvider;
+
+    public DirectoryListingBuilder(IFileProvider fileProvider)
+    {
+        _fileProvider = fileProvider;
+    }
+
+    public string BuildHtmlListing(string path, string requestPath)
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("<!DOCTYPE html>");
-        builder.AppendLine($"<html><head><meta charset='UFT-8'><title>Index of {path}</title></head>");
+        builder.AppendLine($"<html><head><meta charset='UTF-8'><title>Index of {path}</title></head>");
         builder.AppendLine("<body>");
         builder.AppendLine($"<h1>Index of {requestPath}</h1>");
         builder.AppendLine("<ul>");
@@ -19,14 +26,14 @@ public class DirectoryListingBuilder : IDirectoryListingBuilder
             builder.AppendLine($"<li><a href=\"{parentPath}\">../</a></li>");
         }
 
-        foreach (var directory in fileProvider.GetDirectoriesInDirectory(path))
+        foreach (var directory in _fileProvider.GetDirectoriesInDirectory(path))
         {
             string dirName = Path.GetFileName(directory);
             string href = CombineUrlPath(requestPath, dirName + "/");
             builder.AppendLine($"<li><a href=\"{href}\">{dirName}/</a></li>");
         }
 
-        foreach (var file in fileProvider.GetFilesInDirectory(path))
+        foreach (var file in _fileProvider.GetFilesInDirectory(path))
         {
             string filename = Path.GetFileName(file);
             string href = CombineUrlPath(requestPath, filename);
