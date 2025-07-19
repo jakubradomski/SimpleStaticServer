@@ -1,6 +1,6 @@
 {
     "Settings" : {
-        "RootPath" : "/home/kuba/server",
+        "RootPath" : "wwwroot/server",
         "DefaultFile" : "index.html",
         "Port" : 8080
     }
