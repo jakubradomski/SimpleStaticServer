@@ -15,8 +15,10 @@ public class FileSystemFileProvider : IFileProvider
         string systemPath = sanitized.Replace('/', Path.DirectorySeparatorChar)
                                     .Replace('\\', Path.DirectorySeparatorChar);
 
-        string fullPath = Path.Combine(_root, systemPath);
-        if(fullPath.StartsWith(_root, StringComparison.OrdinalIgnoreCase))
+        string fullPath = Path.GetFullPath(Path.Combine(_root, systemPath));
+        string rootFullPath = Path.GetFullPath(_root);
+
+        if (fullPath.StartsWith(rootFullPath, StringComparison.OrdinalIgnoreCase))
         {
             return fullPath;
         }
