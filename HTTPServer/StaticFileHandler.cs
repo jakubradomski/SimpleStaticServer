@@ -24,7 +24,17 @@ internal class StaticFileHandler : IRequestHandler
     {
         string rawPath = request.Path == "/" ? _settings.DefaultFile : request.Path;
         string path = Uri.UnescapeDataString(rawPath);
-        string fullPath = _fileProvider.GetFullPath(path);
+        string fullPath;
+        
+        try
+        {
+            fullPath = _fileProvider.GetFullPath(path);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogWarning(ex, "Unauthorized access to path: {Path}", path);
+            return Create404Response();
+        }
 
         Console.WriteLine($"path:{path} requestPath:{fullPath}");
 

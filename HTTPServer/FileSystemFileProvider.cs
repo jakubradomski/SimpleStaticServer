@@ -15,7 +15,12 @@ public class FileSystemFileProvider : IFileProvider
         string systemPath = sanitized.Replace('/', Path.DirectorySeparatorChar)
                                     .Replace('\\', Path.DirectorySeparatorChar);
 
-        return Path.Combine(_root, systemPath);
+        string fullPath = Path.Combine(_root, systemPath);
+        if(fullPath.StartsWith(_root, StringComparison.OrdinalIgnoreCase))
+        {
+            return fullPath;
+        }
+        throw new UnauthorizedAccessException("Access to the path is denied.");
     }
 
     public bool FileExists(string path) => File.Exists(path);
