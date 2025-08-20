@@ -9,8 +9,7 @@ public class DirectoryListingBuilderTests
     private DirectoryListingBuilder CreateBuilder() =>
         new(_fileProviderMock.Object);
 
-    [Theory]
-    [InlineData()]
+    [Fact]
     public void Builder_Path_ReturnsValidListing()
     {
         string path = "/data";
